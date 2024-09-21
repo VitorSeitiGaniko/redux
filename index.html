@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redux</title>
+    <script src="./immer.umd.production.min.js"></script>
+    <script src="./redux.min.js"></script>
+</head>
+<body>
+    <script>
+        const UPDATE_NAME = 'update_name'
+        const UPDATE_AGE = 'update_age'
+        const PLUS = 'plus'
+        const LESS = 'less'
+
+        const initialState = {
+            name: 'Vitor Ganiko',
+            age: 27
+        }
+
+        const initialStateCont = 10
+
+        function updateName(name) {
+            return {
+                type: UPDATE_NAME,
+                payload: name
+            }
+        }
+
+        function updateAge(age) {
+            return {
+                type: UPDATE_AGE,
+                payload: age
+            }
+        }
+
+        function updateContPlus() {
+            return {
+                type: PLUS,
+            }
+        }
+
+        function updateContLess() {
+            return {
+                type: LESS,
+            }
+        }
+
+        // function reducerProfile(state = initialState, action) {
+        //     if(action.type === UPDATE_NAME) {
+        //         return ({
+        //             ...state, // Copia o estado atual
+        //             name: action.payload, // Atualiza o nome
+        //         })
+        //     }
+
+        //     if(action.type === UPDATE_AGE) {
+        //         return ({
+        //             ...state, // Copia o estado atual
+        //             age: action.payload, // Atualiza o nome
+        //         })
+        //     }
+
+        //     return state
+        // }
+
+        const reducerProfileImmer = immer.produce((state = initialState, action) => {
+            if(action.type === UPDATE_NAME) {
+                state.name = action.payload
+            }
+
+            if(action.type === UPDATE_AGE) {
+                state.age = action.payload
+            }
+        }, initialState)
+
+        function reducerCont(state = initialStateCont, action) {
+            if(action.type === PLUS) {
+                return state + 1
+            }
+
+            if(action.type === LESS) {
+                return state - 1
+            }
+
+            return state
+        }
+
+        const reducer = Redux.combineReducers({
+            //profile: reducerProfile,
+            cont: reducerCont,
+            profileImmer: reducerProfileImmer
+        })
+
+        const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+
+        store.dispatch(updateName("Carol Lima"))
+        store.dispatch(updateAge(25))
+        store.dispatch(updateContPlus())
+        store.dispatch(updateContLess())
+        store.dispatch(updateContLess())
+
+        console.log("Store", store.getState());
+        
+    </script>
+</body>
+</html>
