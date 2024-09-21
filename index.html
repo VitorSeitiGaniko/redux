@@ -65,7 +65,7 @@
         //     return state
         // }
 
-        const reducerProfileImmer = immer.produce((state = initialState, action) => {
+        const reducerProfileImmer = immer.produce((state, action) => {
             if(action.type === UPDATE_NAME) {
                 state.name = action.payload
             }
