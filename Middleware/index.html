@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redux</title>
+    <script src="../redux.min.js"></script>
+</head>
+
+<body>
+    <script>
+        // Constantes para facilitar e evitar erros de digitação
+        const UPDATE_USER = 'update_user'
+        const SUM_CONT = 'sum_cont'
+        const LESS_CONT = 'less_cont'
+
+        // Estados iniciais dos reducers
+        const initialStateUser = {
+            name: 'Vitor Ganiko',
+            age: 27
+        }
+
+        const initialStateCont = 10
+
+        // Criação dos reducers
+        function reducerUser(state = initialStateUser, action) {
+            if (action.type === UPDATE_USER) {
+                return action.payload
+            }
+            return state
+        }
+
+        function reducerCont(state = initialStateCont, action) {
+            if (action.type === SUM_CONT) {
+                return state + action.payload
+            }
+
+            if (action.type === LESS_CONT) {
+                return state - action.payload
+            }
+
+            return state
+        }
+
+        // Criação do Combiner Reducers
+        const reducer = Redux.combineReducers({
+            user: reducerUser,
+            cont: reducerCont
+        })
+
+        // Middleware
+        const logger = store => next => action => {
+            console.log('Prev State: ', store.getState());
+            const result = next(action)
+            console.log('Next State: ', store.getState());
+            return result
+        }
+
+        const loggerReduzir = store => next => action => {
+            if (action.type === LESS_CONT) {
+                window.alert('Reduzindo o contador')
+            }
+            const result = next(action)
+            return result
+        }
+
+        const middleware = Redux.applyMiddleware(logger, loggerReduzir)
+
+        // Criação da store
+        //const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+        const store = Redux.createStore(reducer, middleware)
+
+        // Action Creator
+        function updateUser(user) {
+            return {
+                type: UPDATE_USER,
+                payload: user
+            }
+        }
+
+        function sumCont(value) {
+            return {
+                type: SUM_CONT,
+                payload: value
+            }
+        }
+
+        function lessCont(value) {
+            return {
+                type: LESS_CONT,
+                payload: value
+            }
+        }
+
+        // Action disparada
+        var user_carol = {
+            name: 'Carol Lima',
+            age: 25
+        }
+        store.dispatch(updateUser(user_carol))
+
+        store.dispatch(sumCont(5))
+        store.dispatch(lessCont(10))       
+    </script>
+</body>
+
+</html>
